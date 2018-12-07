@@ -1627,6 +1627,80 @@ Example:
         ]
     }
 
+FLOATING_IP_INCLUDE_TAGS
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionadded:: 15.0.0(Stein)
+
+Default:
+
+.. code-block::python
+
+    FLOATING_IP_INCLUDE_TAGS = []
+
+Only display floating ip pools in the "Pool" menu of the "Allocate
+Floating IP" dialog for external networks that are tagged with one of
+the tags in this list.
+
+Example:
+
+.. code-block::python
+
+    FLOATING_IP_INCLUDE_TAGS = ['show-in-horizon']
+
+This would only display external networks that were tagged with the
+``show-in-horizon`` tag, like this::
+
+    openstack network set my_external_tag --tag show-in-horizon
+
+FLOATING_IP_EXCLUDE_TAGS
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionadded:: 15.0.0(Stein)
+
+Default:
+
+.. code-block::python
+
+    FLOATING_IP_EXCLUDE_TAGS = []
+
+Do not display floating ip pools in the "Pool" menu of the "Allocate
+Floating IP" dialog for external networks that are tagged with one of
+the tags in this list.
+
+Example:
+
+.. code-block::python
+
+    FLOATING_IP_INCLUDE_TAGS = ['hide-in-horizon']
+
+This would not show external networks that were tagged with the
+``hide-in-horizon`` tag, like this::
+
+    openstack network set my_external_tag --tag hide-in-horizon
+
+FLOATING_IP_ORDER_TAGS
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionadded:: 15.0.0(Stein)
+
+Default:
+
+.. code-block::python
+
+    FLOATING_IP_ORDER_TAGS = []
+
+Controls the order in which external networks are listed in the "Pool"
+menu of the "Allocate Floating IP" dialog.
+
+Example:
+
+.. code-block::python
+
+    FLOATING_IP_ORDER_TAGS = ['show-this-first']
+
+This would show external networks that were tagged with the
+``show-this-first`` tag before other external networks.
 
 OPENSTACK_NEUTRON_NETWORK
 ~~~~~~~~~~~~~~~~~~~~~~~~~

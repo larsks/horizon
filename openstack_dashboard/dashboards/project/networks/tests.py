@@ -155,7 +155,7 @@ class NetworkTests(test.TestCase, NetworkStubMixin):
             mock.call(test.IsHttpRequest(), targets=('network', )),
             mock.call(test.IsHttpRequest(), targets=('subnet', )),
         ])
-        self.assertEqual(7, self.mock_tenant_quota_usages.call_count)
+        self.assertEqual(8, self.mock_tenant_quota_usages.call_count)
         self.mock_is_extension_supported.assert_called_once_with(
             test.IsHttpRequest(), 'network_availability_zone')
         self._check_net_list()
@@ -754,7 +754,7 @@ class NetworkTests(test.TestCase, NetworkStubMixin):
     def test_network_create_post_with_subnet_cidr_invalid_v6_range(
             self, test_with_subnetpool=False):
         network = self.networks.first()
-        subnet_v6 = self.subnets.list()[4]
+        subnet_v6 = self.subnets.list()[5]
 
         self._stub_is_extension_supported({'network_availability_zone': False,
                                            'subnet_allocation': True})
@@ -1120,7 +1120,7 @@ class NetworkViewTests(test.TestCase, NetworkStubMixin):
             mock.call(test.IsHttpRequest(), targets=('network', )),
             mock.call(test.IsHttpRequest(), targets=('subnet', )),
         ])
-        self.assertEqual(8, self.mock_tenant_quota_usages.call_count)
+        self.assertEqual(9, self.mock_tenant_quota_usages.call_count)
         self.mock_is_extension_supported.assert_called_once_with(
             test.IsHttpRequest(), 'network_availability_zone')
 
@@ -1157,7 +1157,7 @@ class NetworkViewTests(test.TestCase, NetworkStubMixin):
             mock.call(test.IsHttpRequest(), targets=('network', )),
             mock.call(test.IsHttpRequest(), targets=('subnet', )),
         ])
-        self.assertEqual(8, self.mock_tenant_quota_usages.call_count)
+        self.assertEqual(9, self.mock_tenant_quota_usages.call_count)
         self.mock_is_extension_supported.assert_called_once_with(
             test.IsHttpRequest(), 'network_availability_zone')
 

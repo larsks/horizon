@@ -555,9 +555,33 @@ class FloatingIpManager(object):
 
         :returns: List of FloatingIpPool objects
         """
+        include_tags = getattr(settings, 'FLOATING_IP_INCLUDE_TAGS', None)
+        exclude_tags = getattr(settings, 'FLOATING_IP_EXCLUDE_TAGS', None)
+        order_tags = getattr(settings, 'FLOATING_IP_ORDER_TAGS', None)
+
         search_opts = {'router:external': True}
-        return [FloatingIpPool(pool) for pool
-                in self.client.list_networks(**search_opts).get('networks')]
+        pools = [FloatingIpPool(pool) for pool
+                 in self.client.list_networks(**search_opts).get('networks')]
+
+        if include_tags:
+            pools = [pool for pool in pools
+                     if any(tag in pool.get('tags', [])
+                            for tag in include_tags)]
+
+        if exclude_tags:
+            pools = [pool for pool in pools
+                     if not any(tag in pool.get('tags', [])
+                                for tag in exclude_tags)]
+
+        if order_tags:
+            pools = list(sorted(
+                pools,
+                key=lambda pool:
+                ([i for i, tag in enumerate(order_tags)
+                  if tag in pool['tags']] + [len(order_tags)])[0]
+            ))
+
+        return pools
 
     def _get_instance_type_from_device_owner(self, device_owner):
         for key, value in self.device_owner_map.items():

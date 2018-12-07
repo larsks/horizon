@@ -1368,6 +1368,48 @@ class NeutronApiFloatingIpTests(test.APIMockTestCase):
                              [getattr(p, attr) for p in rets])
         self.qclient.list_networks.assert_called_once_with(**search_opts)
 
+    @override_settings(FLOATING_IP_INCLUDE_TAGS=['tag1'])
+    def test_floating_ip_pools_list_include_tags(self):
+        search_opts = {'router:external': True}
+        ext_nets = [n for n in self.api_networks.list()
+                    if n['router:external'] and 'tag1' in n.get('tags', [])]
+        self.qclient.list_networks.return_value = {'networks': ext_nets}
+
+        rets = api.neutron.floating_ip_pools_list(self.request)
+        for attr in ['id', 'name']:
+            self.assertEqual([p[attr] for p in ext_nets],
+                             [getattr(p, attr) for p in rets])
+        self.qclient.list_networks.assert_called_once_with(**search_opts)
+
+    @override_settings(FLOATING_IP_EXCLUDE_TAGS=['tag1'])
+    def test_floating_ip_pools_list_exclude_tags(self):
+        search_opts = {'router:external': True}
+        ext_nets = [n for n in self.api_networks.list()
+                    if n['router:external'] and 'tag1' not in n.get('tags', [])]
+        self.qclient.list_networks.return_value = {'networks': ext_nets}
+
+        rets = api.neutron.floating_ip_pools_list(self.request)
+        for attr in ['id', 'name']:
+            self.assertEqual([p[attr] for p in ext_nets],
+                             [getattr(p, attr) for p in rets])
+        self.qclient.list_networks.assert_called_once_with(**search_opts)
+
+    @override_settings(FLOATING_IP_ORDER_TAGS=['tag1', 'tag2'])
+    def test_floating_ip_pools_list_order_tags_tag1_first(self):
+        ext_nets = [n for n in self.api_networks.list()
+                    if n['router:external']]
+        self.qclient.list_networks.return_value = {'networks': ext_nets}
+        rets = api.neutron.floating_ip_pools_list(self.request)
+        self.assertEqual(rets[0]['tags'], ['tag1'])
+
+    @override_settings(FLOATING_IP_ORDER_TAGS=['tag2', 'tag1'])
+    def test_floating_ip_pools_list_order_tags_tag2_first(self):
+        ext_nets = [n for n in self.api_networks.list()
+                    if n['router:external']]
+        self.qclient.list_networks.return_value = {'networks': ext_nets}
+        rets = api.neutron.floating_ip_pools_list(self.request)
+        self.assertEqual(rets[0]['tags'], ['tag2'])
+
     def test_floating_ip_list(self):
         fips = self.api_floating_ips.list()
         filters = {'tenant_id': self.request.user.tenant_id}

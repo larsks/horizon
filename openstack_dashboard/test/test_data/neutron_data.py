@@ -269,12 +269,13 @@ def data(TEST):
     TEST.api_ports.add(port_dict)
     TEST.ports.add(neutron.Port(port_dict))
 
-    # External network.
+    # 1st External network.
     network_dict = {'admin_state_up': True,
                     'id': '9b466b94-213a-4cda-badf-72c102a874da',
                     'name': 'ext_net',
                     'status': 'ACTIVE',
                     'subnets': ['d6bdc71c-7566-4d32-b3ff-36441ce746e8'],
+                    'tags': ['tag1'],
                     'tenant_id': '3',
                     'router:external': True,
                     'shared': False}
@@ -291,6 +292,38 @@ def data(TEST):
                    'network_id': network_dict['id'],
                    'tenant_id': network_dict['tenant_id']}
     ext_net = network_dict
+
+    TEST.api_networks.add(network_dict)
+    TEST.api_subnets.add(subnet_dict)
+
+    network = copy.deepcopy(network_dict)
+    subnet = neutron.Subnet(subnet_dict)
+    network['subnets'] = [subnet]
+    TEST.networks.add(neutron.Network(network))
+    TEST.subnets.add(subnet)
+
+    # 2nd External network.
+    network_dict = {'admin_state_up': True,
+                    'id': 'ab466b94-213a-4cda-badf-72c102a874da',
+                    'name': 'another_ext_net',
+                    'status': 'ACTIVE',
+                    'subnets': ['a6bdc71c-7566-4d32-b3ff-36441ce746e8'],
+                    'tags': ['tag2'],
+                    'tenant_id': '3',
+                    'router:external': True,
+                    'shared': False}
+    subnet_dict = {'allocation_pools': [{'start': '172.24.3.226.',
+                                         'end': '172.24.3.238'}],
+                   'dns_nameservers': [],
+                   'host_routes': [],
+                   'cidr': '172.24.3.0/28',
+                   'enable_dhcp': False,
+                   'gateway_ip': '172.24.3.225',
+                   'id': 'a6bdc71c-7566-4d32-b3ff-36441ce746e8',
+                   'ip_version': 4,
+                   'name': 'ext_subnet',
+                   'network_id': network_dict['id'],
+                   'tenant_id': network_dict['tenant_id']}
 
     TEST.api_networks.add(network_dict)
     TEST.api_subnets.add(subnet_dict)
